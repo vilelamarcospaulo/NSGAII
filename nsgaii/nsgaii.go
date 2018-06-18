@@ -146,13 +146,6 @@ func (nsgaii *NSGAII) rank() int {
 		}
 	}
 
-	n := 0
-	for _, ind := range nsgaii.Population {
-		if ind.Rank != 100000 {
-			n++
-		}
-	}
-
 	if rankedIndividuals > nsgaii.PopulationSize {
 		return rank - 1
 	}
