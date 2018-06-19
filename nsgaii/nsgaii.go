@@ -33,7 +33,7 @@ func (nsgaii *NSGAII) Run(Generations int, PopulationSize int, ChildSize int, Mu
 	nsgaii.plot, _ = glot.NewPlot(2, true, true)
 
 	nsgaii.newPopulation()
-	for nsgaii.Generation = 1; nsgaii.Generation <= Generations; nsgaii.Generation++ {
+	for nsgaii.Generation = 0; nsgaii.Generation <= Generations; nsgaii.Generation++ {
 		nsgaii.nextPopulation()
 		nsgaii.doPlot()
 	}
@@ -59,9 +59,26 @@ func (nsgaii *NSGAII) doPlot() {
 
 	// nsgaii.plot.SetYrange(-5, 5)
 	// nsgaii.plot.SetXrange(-5, 5)
-
+	// if nsgaii.Generation%5 == 0 && nsgaii.Generation < 10 {
+	// 	file := fmt.Sprintf("%s%d%s", "plots/gen", nsgaii.Generation, ".png")
+	// 	err := nsgaii.plot.SavePlot(file)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// } else if nsgaii.Generation%10 == 0 && nsgaii.Generation < 10 {
+	// 	file := fmt.Sprintf("%s%d%s", "plots/gen", nsgaii.Generation, ".png")
+	// 	err := nsgaii.plot.SavePlot(file)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// } else if nsgaii.Generation%100 == 0 && nsgaii.Generation < 100 {
+	// 	file := fmt.Sprintf("%s%d%s", "plots/gen", nsgaii.Generation, ".png")
+	// 	err := nsgaii.plot.SavePlot(file)
+	// 	if err != nil {
+	// 		fmt.Println(err)
+	// 	}
+	// }
 	nsgaii.plot.ResetPlot()
-	//plot.SavePlot("plots/nsga.png")
 }
 
 //NewPopulation :: Cria uma população inicial aleatoria
@@ -102,6 +119,9 @@ func (nsgaii *NSGAII) nextPopulation() {
 		}
 
 		Crossover(parent1, parent2, child1, child2)
+
+		child1.Mutation(nsgaii.MutationProbability)
+		child2.Mutation(nsgaii.MutationProbability)
 
 		//Avalia os filhos gerados de acordo com o novo DNA
 		child1.Eval()
@@ -180,13 +200,12 @@ func (nsgaii *NSGAII) crowdingDistance(rank int) {
 
 		sort.Sort(ByGoal(onRank))
 
-		onRank[0].CrowdingDistance = 10000
-		onRank[size-1].CrowdingDistance = 10000
+		onRank[0].CrowdingDistance += 10000
+		onRank[size-1].CrowdingDistance += 10000
 
 		for index := 1; index < size-1; index++ {
-			onRank[index].CrowdingDistance +=
-				math.Abs(onRank[index-1].Goals[goal] -
-					onRank[index+1].Goals[goal])
+			goalAverage := math.Abs(onRank[index-1].Goals[goal] - onRank[index+1].Goals[goal])
+			onRank[index].CrowdingDistance += goalAverage
 		}
 	}
 }

@@ -69,6 +69,14 @@ func random(min float64, max float64) float64 {
 func (individual *Individual) Mutation(probability float64) {
 	if rand.Float64() < probability {
 		(*individual.DNA)[rand.Intn(individual.DNASize)] = randomValidValue()
+		// for i := 0; i < individual.DNASize; i++ {
+		// 	(*individual.DNA)[i] += random(-2, 2)
+		// 	if (*individual.DNA)[i] > 6 {
+		// 		(*individual.DNA)[i] = 6
+		// 	} else if (*individual.DNA)[i] < 0 {
+		// 		(*individual.DNA)[i] = 0
+		// 	}
+		// }
 	}
 }
 
