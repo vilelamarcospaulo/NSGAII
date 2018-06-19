@@ -128,12 +128,11 @@ func (nsgaii *NSGAII) nextPopulation() {
 		child2.Eval()
 	}
 
-	nsgaii.crowdingDistance(nsgaii.rank())
-	nsgaii.reinsert()
-	for i := 0; i < nsgaii.PopulationSize; i++ {
-		fmt.Println(nsgaii.Population[i].Rank, nsgaii.Population[i].CrowdingDistance)
+	lastRank := nsgaii.rank()
+	for i := 0; i < lastRank; i++ {
+		nsgaii.crowdingDistance(i)
 	}
-	fmt.Println("")
+	nsgaii.reinsert()
 }
 
 //Rank :: Ranqueia os individuos da população de acordo com a nao dominancia
@@ -204,8 +203,8 @@ func (nsgaii *NSGAII) crowdingDistance(rank int) {
 
 		sort.Sort(ByGoal(onRank))
 
-		onRank[0].CrowdingDistance += 10000
-		onRank[size-1].CrowdingDistance += 10000
+		onRank[0].CrowdingDistance += 100000
+		onRank[size-1].CrowdingDistance += 100000
 
 		for index := 1; index < size-1; index++ {
 			goalAverage := math.Abs(onRank[index-1].Goals[goal] - onRank[index+1].Goals[goal])

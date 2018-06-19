@@ -69,7 +69,7 @@ func random(min float64, max float64) float64 {
 func (individual *Individual) Mutation(probability float64) {
 	for i := 0; i < individual.DNASize; i++ {
 		if rand.Float64() > probability {
-			continue
+			return
 		}
 
 		(*individual.DNA)[i] += random(-2, 2)
