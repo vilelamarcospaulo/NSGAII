@@ -90,7 +90,7 @@ func (nsgaii *NSGAII) newPopulation() {
 		nsgaii.Population[i].NewRandom()
 		nsgaii.Population[i].Eval()
 	}
-	nsgaii.rank()
+	nsgaii.crowdingDistance(nsgaii.rank())
 }
 
 func (nsgaii NSGAII) selectParentByTour() (int, Individual) {
@@ -130,6 +130,10 @@ func (nsgaii *NSGAII) nextPopulation() {
 
 	nsgaii.crowdingDistance(nsgaii.rank())
 	nsgaii.reinsert()
+	for i := 0; i < nsgaii.PopulationSize; i++ {
+		fmt.Println(nsgaii.Population[i].Rank, nsgaii.Population[i].CrowdingDistance)
+	}
+	fmt.Println("")
 }
 
 //Rank :: Ranqueia os individuos da população de acordo com a nao dominancia
