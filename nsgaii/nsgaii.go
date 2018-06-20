@@ -262,3 +262,42 @@ func (nsgaii *NSGAII) CalcParetoSubset() float64 {
 	nsgaii.ParetoSubset = (1 - nsgaii.ErrorRate) * float64(nsgaii.PopulationSize)
 	return nsgaii.ParetoSubset
 }
+
+//CalcSpread :: Calcula o spread
+func (nsgaii *NSGAII) CalcSpread() float64 {
+	nonDominated := []*Individual{}
+	nonDominatedSize := 0
+	for i := 0; i < nsgaii.PopulationSize; i++ {
+		if nsgaii.Population[i].Rank == 0 {
+			nonDominatedSize++
+			nsgaii.Population[i].CurrentGoal = 0 //CONSIDERAR X
+			nonDominated = append(nonDominated, &nsgaii.Population[i])
+		}
+	}
+
+	sort.Sort(ByGoal(nonDominated))
+	df := nonDominated[0].GoalsDistance(*nonDominated[1])
+	di := nonDominated[nonDominatedSize-2].GoalsDistance(*nonDominated[nonDominatedSize-1])
+
+	d := []float64{}
+	dAverage := 0.0
+
+	nsgaii.Spread = 0.0
+
+	for i := 1; i < nonDominatedSize-2; i++ {
+		dI := nonDominated[i].GoalsDistance(*nonDominated[i+1])
+		d = append(d, di)
+		dAverage += dI
+	}
+
+	dAverage /= float64(len(d))
+
+	for i := 0; i < len(d); i++ {
+		nsgaii.Spread += math.Abs(d[i] - dAverage)
+	}
+
+	nsgaii.Spread += df + di
+	nsgaii.Spread /= df + di + (dAverage * float64(len(d)))
+
+	return nsgaii.Spread
+}
