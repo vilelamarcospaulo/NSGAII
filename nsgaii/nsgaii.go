@@ -234,3 +234,22 @@ func (nsgaii *NSGAII) CalcErrorRate() {
 
 	nsgaii.ErrorRate /= float64(nsgaii.PopulationSize)
 }
+
+//CalcGenerationalDistance :: Calcula o error rate da populacao atual
+func (nsgaii *NSGAII) CalcGenerationalDistance() {
+	nsgaii.GenerationalDistance = 0.0
+
+	sizeRef := len(nsgaii.ParetoOptimal)
+
+	for i := 0; i < nsgaii.PopulationSize; i++ {
+		for j := 0; j < sizeRef; j++ {
+			nsgaii.ParetoOptimal[j].GoalsDistance(nsgaii.Population[i])
+		}
+		sort.Sort(ByDistance(nsgaii.ParetoOptimal))
+
+		nsgaii.GenerationalDistance += nsgaii.ParetoOptimal[0].Distance
+	}
+
+	nsgaii.GenerationalDistance = math.Sqrt(nsgaii.GenerationalDistance)
+	nsgaii.GenerationalDistance /= float64(nsgaii.PopulationSize)
+}

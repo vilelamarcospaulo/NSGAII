@@ -16,6 +16,9 @@ type Individual struct {
 
 	Rank             int
 	CrowdingDistance float64
+
+	//Usado para calcular GenerationalDistance
+	Distance float64
 }
 
 func randomValidValue() float64 {
@@ -123,4 +126,15 @@ func Crossover(parent1 Individual, parent2 Individual, child1 *Individual, child
 	for i := 0; i < parent1.GoalsSize; i++ {
 		child1.Goals[i], child2.Goals[i] = 0, 0
 	}
+}
+
+//GoalsDistance :: Calcula a soma da distancia euclidiana de cada objetivo, entre os dois individuos
+func (individual *Individual) GoalsDistance(other Individual) float64 {
+	individual.Distance = 0
+
+	for i := 0; i < individual.GoalsSize; i++ {
+		individual.Distance += math.Pow(individual.Goals[i]-other.Goals[i], 2.0)
+	}
+
+	return individual.Distance
 }
