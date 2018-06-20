@@ -41,7 +41,7 @@ func (nsgaii *NSGAII) Run(Generations int, PopulationSize int, ChildSize int, Mu
 	nsgaii.newPopulation()
 	for nsgaii.Generation = 0; nsgaii.Generation <= Generations; nsgaii.Generation++ {
 		nsgaii.nextPopulation()
-		nsgaii.doPlot()
+		//nsgaii.doPlot()
 	}
 }
 

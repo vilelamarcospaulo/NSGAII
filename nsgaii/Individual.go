@@ -138,3 +138,13 @@ func (individual *Individual) GoalsDistance(other Individual) float64 {
 
 	return individual.Distance
 }
+
+//Equals :: verifica se tme o mesmo DNA
+func (individual Individual) Equals(other Individual) bool {
+	for i := 0; i < individual.DNASize; i++ {
+		if (*individual.DNA)[i] != (*other.DNA)[i] {
+			return false
+		}
+	}
+	return true
+}
