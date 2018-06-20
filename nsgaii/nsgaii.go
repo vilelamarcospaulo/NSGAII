@@ -220,7 +220,7 @@ func (nsgaii *NSGAII) crowdingDistance(rank int) {
 }
 
 //CalcErrorRate :: Calcula o error rate da populacao atual
-func (nsgaii *NSGAII) CalcErrorRate() {
+func (nsgaii *NSGAII) CalcErrorRate() float64 {
 	nsgaii.ErrorRate = 0.0
 
 	for _, ind := range nsgaii.Population {
@@ -233,10 +233,11 @@ func (nsgaii *NSGAII) CalcErrorRate() {
 	}
 
 	nsgaii.ErrorRate /= float64(nsgaii.PopulationSize)
+	return nsgaii.ErrorRate
 }
 
-//CalcGenerationalDistance :: Calcula o error rate da populacao atual
-func (nsgaii *NSGAII) CalcGenerationalDistance() {
+//CalcGenerationalDistance :: Calculaa generational distance
+func (nsgaii *NSGAII) CalcGenerationalDistance() float64 {
 	nsgaii.GenerationalDistance = 0.0
 
 	sizeRef := len(nsgaii.ParetoOptimal)
@@ -252,4 +253,12 @@ func (nsgaii *NSGAII) CalcGenerationalDistance() {
 
 	nsgaii.GenerationalDistance = math.Sqrt(nsgaii.GenerationalDistance)
 	nsgaii.GenerationalDistance /= float64(nsgaii.PopulationSize)
+
+	return nsgaii.GenerationalDistance
+}
+
+//CalcParetoSubset :: Calcula o paretosubset
+func (nsgaii *NSGAII) CalcParetoSubset() float64 {
+	nsgaii.ParetoSubset = (1 - nsgaii.ErrorRate) * float64(nsgaii.PopulationSize)
+	return nsgaii.ParetoSubset
 }
