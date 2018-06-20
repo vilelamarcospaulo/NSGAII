@@ -11,7 +11,8 @@ import (
 
 //NSGAII :: Representacao da estrutura do AG do tipo NSGAII
 type NSGAII struct {
-	Population []Individual
+	Population    []Individual
+	ParetoOptimal []Individual
 
 	PopulationSize int
 	ChildSize      int
@@ -19,6 +20,11 @@ type NSGAII struct {
 
 	Generation          int
 	MutationProbability float64
+
+	ErrorRate            float64
+	GenerationalDistance float64
+	ParetoSubset         float64
+	Spread               float64
 
 	plot *glot.Plot
 }
@@ -211,4 +217,20 @@ func (nsgaii *NSGAII) crowdingDistance(rank int) {
 			onRank[index].CrowdingDistance += goalAverage
 		}
 	}
+}
+
+//CalcErrorRate :: Calcula o error rate da populacao atual
+func (nsgaii *NSGAII) CalcErrorRate() {
+	nsgaii.ErrorRate = 0.0
+
+	for _, ind := range nsgaii.Population {
+		for _, indRef := range nsgaii.ParetoOptimal {
+			if indRef.Dominate(&ind) {
+				nsgaii.ErrorRate++
+				break
+			}
+		}
+	}
+
+	nsgaii.ErrorRate /= float64(nsgaii.PopulationSize)
 }
