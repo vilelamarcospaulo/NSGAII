@@ -46,6 +46,17 @@ func (nsgaii *NSGAII) Run(Generations int, PopulationSize int, ChildSize int, Mu
 			nsgaii.DoPlot()
 		}
 	}
+
+	nonDominated := make([]Individual, 0)
+	for i := 0; i < nsgaii.PopulationSize; i++ {
+		if nsgaii.Population[i].Rank == 0 {
+			nonDominated = append(nonDominated, nsgaii.Population[i])
+		}
+	}
+	nsgaii.Population = nonDominated
+	if plot {
+		nsgaii.DoPlot()
+	}
 }
 
 //Plot :: Plota a populacao atual
@@ -124,12 +135,12 @@ func (nsgaii *NSGAII) nextPopulation() {
 		child1 := &nsgaii.Population[i]
 		child2 := &nsgaii.Population[i+1]
 
-		indexParent1, parent1 := nsgaii.selectParentByTour()
-		indexParent2, parent2 := nsgaii.selectParentByTour()
+		_, parent1 := nsgaii.selectParentByTour()
+		_, parent2 := nsgaii.selectParentByTour()
 
-		for indexParent1 == indexParent2 {
-			indexParent2, parent2 = nsgaii.selectParentByTour()
-		}
+		// for indexParent1 == indexParent2 {
+		// 	indexParent2, parent2 = nsgaii.selectParentByTour()
+		// }
 
 		Crossover(parent1, parent2, child1, child2)
 

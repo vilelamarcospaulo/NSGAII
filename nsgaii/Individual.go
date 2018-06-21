@@ -75,7 +75,7 @@ func (individual *Individual) Mutation(probability float64) {
 			return
 		}
 
-		(*individual.DNA)[i] += random(-2, 2)
+		(*individual.DNA)[i] += random(-1, 1)
 		if (*individual.DNA)[i] > 6 {
 			(*individual.DNA)[i] = 6
 		} else if (*individual.DNA)[i] < 0 {
