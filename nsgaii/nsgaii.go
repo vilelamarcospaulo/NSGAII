@@ -43,22 +43,26 @@ func (nsgaii *NSGAII) Run(Generations int, PopulationSize int, ChildSize int, Mu
 	for nsgaii.Generation = 0; nsgaii.Generation <= Generations; nsgaii.Generation++ {
 		nsgaii.nextPopulation()
 		if plot {
-			nsgaii.doPlot()
+			nsgaii.DoPlot()
 		}
 	}
 }
 
 //Plot :: Plota a populacao atual
-func (nsgaii *NSGAII) doPlot() {
-	xaxis := make([]float64, 0)
-	yaxis := make([]float64, 0)
+func (nsgaii *NSGAII) DoPlot() {
+	if nsgaii.plot == nil {
+		nsgaii.plot, _ = glot.NewPlot(2, true, true)
+	}
+
+	xaxis := make([]float64, len(nsgaii.Population))
+	yaxis := make([]float64, len(nsgaii.Population))
 	for i := 0; i < len(nsgaii.Population); i++ {
-		xaxis = append(xaxis, nsgaii.Population[i].Goals[0])
-		yaxis = append(yaxis, nsgaii.Population[i].Goals[1])
+		xaxis[i] = nsgaii.Population[i].Goals[0]
+		yaxis[i] = nsgaii.Population[i].Goals[1]
 	}
 
 	points := [][]float64{xaxis, yaxis}
-	nsgaii.plot.AddPointGroup(" ", "lines", points)
+	nsgaii.plot.AddPointGroup(" ", "points", points)
 
 	title := fmt.Sprintf("%s%d", "Generation: ", nsgaii.Generation)
 	nsgaii.plot.SetTitle(title)

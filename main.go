@@ -2,14 +2,18 @@ package main
 
 import (
 	"NSGAII/nsgaii"
+	"bufio"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 )
 
-func main() {
+func findOptimal() []nsgaii.Individual {
 	optimal := []nsgaii.Individual{}
 	for i := 0; i < 10; i++ {
 		ag := nsgaii.NSGAII{}
-		ag.Run(500, 1000, 200, .02, false)
+		ag.Run(500, 1000, 500, .02, false)
 
 		for _, ind := range ag.Population {
 			if ind.Rank != 0 {
@@ -46,6 +50,48 @@ func main() {
 		fmt.Println("Execução: ", i, " //  ", len(optimal), " soluções nao dominadas")
 	}
 
+	f, _ := os.Create("pareto.dat")
+	buffer := ""
+	for _, ind := range optimal {
+		buffer += fmt.Sprintf("%f %f\n", ind.Goals[0], ind.Goals[1])
+	}
+	f.Write([]byte(buffer))
+
+	return optimal
+}
+
+func readOptimal() []nsgaii.Individual {
+	optimal := []nsgaii.Individual{}
+	file, _ := os.Open("pareto.dat")
+
+	scanner := bufio.NewScanner(file)
+	scanner.Split(bufio.ScanLines)
+
+	for scanner.Scan() {
+		buffer := scanner.Text()
+		values := strings.Split(buffer, " ")
+
+		ind := nsgaii.Individual{}
+		ind.NewRandom()
+
+		for i := 0; i < ind.GoalsSize; i++ {
+			ind.Goals[i], _ = strconv.ParseFloat(values[i], 64)
+		}
+
+		optimal = append(optimal, ind)
+	}
+
+	return optimal
+}
+
+func main() {
+	optimal := readOptimal()
+
+	//agAux := nsgaii.NSGAII{}
+	//agAux.Population = optimal
+	//agAux.DoPlot()
+	return
+
 	ag := nsgaii.NSGAII{}
 	ag.Run(500, 1000, 200, .02, false)
 
@@ -53,7 +99,7 @@ func main() {
 	fmt.Println("Error rate: ", ag.CalcErrorRate())
 	fmt.Println("Pareto subset: ", ag.CalcParetoSubset())
 	fmt.Println("Generational distance: ", ag.CalcGenerationalDistance())
-	fmt.Println("Spread (m3): ", ag.CalcSpread())
+	fmt.Println("Spread : ", ag.CalcSpread())
 	fmt.Println("Maximum Spread (m3): ", ag.CalcMaximumSpread())
 
 }
