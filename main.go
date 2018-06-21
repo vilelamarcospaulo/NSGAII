@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func findOptimal() []nsgaii.Individual {
@@ -85,20 +86,23 @@ func readOptimal() []nsgaii.Individual {
 }
 
 func main() {
-	// optimal := readOptimal()
-
 	// agAux := nsgaii.NSGAII{}
 	// agAux.Population = optimal
 	// agAux.DoPlot()
 
 	ag := nsgaii.NSGAII{}
+	start := time.Now()
 	ag.Run(500, 1000, 200, 0.02, true)
+	elapsed := time.Since(start)
+	optimal := readOptimal()
 
-	// ag.ParetoOptimal = optimal
-	// fmt.Println("Error rate: ", ag.CalcErrorRate())
-	// fmt.Println("Pareto subset: ", ag.CalcParetoSubset())
-	// fmt.Println("Generational distance: ", ag.CalcGenerationalDistance())
-	// fmt.Println("Spread : ", ag.CalcSpread())
-	// fmt.Println("Maximum Spread (m3): ", ag.CalcMaximumSpread())
+	ag.ParetoOptimal = optimal
+	fmt.Println("Time: ", elapsed)
+	fmt.Println("Pareto size: ", ag.PopulationSize)
+	fmt.Println("Error rate: ", ag.CalcErrorRate())
+	fmt.Println("Pareto subset: ", ag.CalcParetoSubset())
+	fmt.Println("Generational distance: ", ag.CalcGenerationalDistance())
+	fmt.Println("Spread : ", ag.CalcSpread())
+	fmt.Println("Maximum Spread (m3): ", ag.CalcMaximumSpread())
 
 }

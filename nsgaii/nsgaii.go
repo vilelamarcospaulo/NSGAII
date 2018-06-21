@@ -54,6 +54,7 @@ func (nsgaii *NSGAII) Run(Generations int, PopulationSize int, ChildSize int, Mu
 		}
 	}
 	nsgaii.Population = nonDominated
+	nsgaii.PopulationSize = len(nsgaii.Population)
 	if plot {
 		nsgaii.DoPlot()
 	}
