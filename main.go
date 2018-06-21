@@ -13,7 +13,7 @@ func main() {
 
 	ag := nsgaii.NSGAII{}
 	start := time.Now()
-	ag.Run(500, 1000, 200, .02, true)
+	ag.Run(1000, 2000, 400, .02, true)
 	elapsed := time.Since(start)
 
 	fmt.Println("Time: ", elapsed)
@@ -21,5 +21,4 @@ func main() {
 	fmt.Println("Error rate: ", ag.CalcErrorRate())
 	fmt.Println("Pareto subset: ", ag.CalcParetoSubset())
 	fmt.Println("Maximum Spread (m3): ", ag.CalcMaximumSpread())
-
 }

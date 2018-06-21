@@ -13,6 +13,7 @@ type Individual struct {
 	CurrentGoal int
 	Goals       []float64
 	GoalsSize   int
+	gX          float64
 
 	Rank             int
 	CrowdingDistance float64
@@ -22,12 +23,12 @@ type Individual struct {
 }
 
 func randomValidValue() float64 {
-	return random(0, 6)
+	return random(0, 1)
 }
 
 //NewRandom :: Gera um individuo
 func (individual *Individual) NewRandom() {
-	individual.DNASize, individual.GoalsSize = 5, 2
+	individual.DNASize, individual.GoalsSize = 30, 2 //5, 2
 
 	dna := make([]float64, individual.DNASize)
 
@@ -53,10 +54,22 @@ func (individual *Individual) Eval() {
 		individual.Goals[i] = 0.0
 	}
 
-	for i := 0; i < individual.DNASize; i++ {
-		individual.Goals[0] += math.Sin(math.Pi * (*individual.DNA)[i])
-		individual.Goals[1] += math.Cos(math.Pi * (*individual.DNA)[i])
+	individual.Goals[0] = (*individual.DNA)[0]
+	individual.gX = 0.0
+
+	for i := 1; i < individual.DNASize; i++ {
+		individual.gX += (*individual.DNA)[i]
+		// individual.Goals[0] += math.Sin(math.Pi * (*individual.DNA)[i])
+		// individual.Goals[1] += math.Cos(math.Pi * (*individual.DNA)[i])
 	}
+	individual.gX *= 9.0 / (float64(individual.DNASize) - 1)
+	individual.gX += 1
+
+	individual.Goals[1] =
+		individual.gX *
+			(1 -
+				math.Sqrt(individual.Goals[0]/individual.gX) -
+				((individual.Goals[0] / individual.gX) * math.Sin(10*math.Pi*individual.Goals[0])))
 
 	individual.Rank = -1
 	individual.CrowdingDistance = -1
@@ -76,8 +89,8 @@ func (individual *Individual) Mutation(probability float64) {
 		}
 		sum := random(-0.5, 0.5)
 		(*individual.DNA)[i] += sum
-		if (*individual.DNA)[i] > 6 {
-			(*individual.DNA)[i] = 6
+		if (*individual.DNA)[i] > 1 {
+			(*individual.DNA)[i] = 1
 		} else if (*individual.DNA)[i] < 0 {
 			(*individual.DNA)[i] = 0
 		}

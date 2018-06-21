@@ -238,17 +238,8 @@ func (nsgaii *NSGAII) CalcErrorRate() float64 {
 	nsgaii.ErrorRate = 0.0
 
 	for _, ind := range nsgaii.Population {
-		for i := 0; i < ind.DNASize; i++ {
-			cell := (*ind.DNA)[i]
-
-			if (cell >= 1 && cell <= 1.5) ||
-				(cell >= 3 && cell <= 3.5) ||
-				(cell >= 5 && cell <= 5.5) {
-				continue
-			}
-
+		if ind.gX != 1 {
 			nsgaii.ErrorRate++
-			break
 		}
 	}
 
