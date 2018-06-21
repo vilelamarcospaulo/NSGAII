@@ -11,8 +11,7 @@ import (
 
 //NSGAII :: Representacao da estrutura do AG do tipo NSGAII
 type NSGAII struct {
-	Population    []Individual
-	ParetoOptimal []Individual
+	Population []Individual
 
 	PopulationSize int
 	ChildSize      int
