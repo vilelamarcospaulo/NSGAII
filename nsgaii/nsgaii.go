@@ -82,8 +82,6 @@ func (nsgaii *NSGAII) DoPlot() {
 	nsgaii.plot.SetXLabel("SUM(sin(Pi * N))")
 	nsgaii.plot.SetYLabel("SUM(sin(Pi * N))")
 
-	// nsgaii.plot.SetYrange(-5, 5)
-	// nsgaii.plot.SetXrange(-5, 5)
 	// if nsgaii.Generation%5 == 0 && nsgaii.Generation < 10 {
 	// 	file := fmt.Sprintf("%s%d%s", "plots/gen", nsgaii.Generation, ".png")
 	// 	err := nsgaii.plot.SavePlot(file)
@@ -139,8 +137,8 @@ func (nsgaii *NSGAII) nextPopulation() {
 		_, parent1 := nsgaii.selectParentByTour()
 		_, parent2 := nsgaii.selectParentByTour()
 
-		// for indexParent1 == indexParent2 {
-		// 	indexParent2, parent2 = nsgaii.selectParentByTour()
+		// for parent1.Equals(parent2) {
+		// 	_, parent2 = nsgaii.selectParentByTour()
 		// }
 
 		Crossover(parent1, parent2, child1, child2)
@@ -299,6 +297,7 @@ func (nsgaii *NSGAII) CalcSpread() float64 {
 	for i := 0; i < nsgaii.PopulationSize; i++ {
 		if nsgaii.Population[i].Rank == 0 {
 			nonDominatedSize++
+			nsgaii.Population[i].CurrentGoal = 0
 			nonDominated = append(nonDominated, &nsgaii.Population[i])
 		}
 	}
@@ -348,10 +347,8 @@ func (nsgaii *NSGAII) CalcMaximumSpread() float64 {
 			nonDominated = append(nonDominated, &nsgaii.Population[i])
 		}
 	}
-	sort.Sort(ByGoal(nonDominated))
 
 	nsgaii.MaximumSpread = 0.0
-
 	for goal := 0; goal < nsgaii.Population[0].GoalsSize; goal++ {
 		for i := 0; i < nonDominatedSize; i++ {
 			nonDominated[i].CurrentGoal = goal

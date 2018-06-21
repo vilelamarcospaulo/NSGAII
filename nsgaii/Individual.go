@@ -72,10 +72,10 @@ func random(min float64, max float64) float64 {
 func (individual *Individual) Mutation(probability float64) {
 	for i := 0; i < individual.DNASize; i++ {
 		if rand.Float64() > probability {
-			return
+			continue
 		}
-
-		(*individual.DNA)[i] += random(-1, 1)
+		sum := random(-0.5, 0.5)
+		(*individual.DNA)[i] += sum
 		if (*individual.DNA)[i] > 6 {
 			(*individual.DNA)[i] = 6
 		} else if (*individual.DNA)[i] < 0 {
@@ -116,6 +116,15 @@ func Crossover(parent1 Individual, parent2 Individual, child1 *Individual, child
 			(*child1.DNA)[i], (*child2.DNA)[i] = (*parent2.DNA)[i], (*parent1.DNA)[i]
 		}
 	}
+
+	// middle := int(math.Ceil(float64(parent1.DNASize) / 2.0))
+	// for i := 0; i < middle; i++ {
+	// 	(*child1.DNA)[i], (*child2.DNA)[i] = (*parent1.DNA)[i], (*parent2.DNA)[i]
+	// }
+
+	// for i := middle; i < parent1.DNASize; i++ {
+	// 	(*child1.DNA)[i], (*child2.DNA)[i] = (*parent2.DNA)[i], (*parent1.DNA)[i]
+	// }
 
 	child1.Rank = -1
 	child2.Rank = -1
