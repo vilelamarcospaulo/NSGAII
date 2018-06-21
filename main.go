@@ -101,8 +101,6 @@ func main() {
 	fmt.Println("Pareto size: ", ag.PopulationSize)
 	fmt.Println("Error rate: ", ag.CalcErrorRate())
 	fmt.Println("Pareto subset: ", ag.CalcParetoSubset())
-	fmt.Println("Generational distance: ", ag.CalcGenerationalDistance())
-	fmt.Println("Spread : ", ag.CalcSpread())
 	fmt.Println("Maximum Spread (m3): ", ag.CalcMaximumSpread())
 
 }

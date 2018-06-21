@@ -21,11 +21,9 @@ type NSGAII struct {
 	Generation          int
 	MutationProbability float64
 
-	ErrorRate            float64
-	GenerationalDistance float64
-	ParetoSubset         float64
-	Spread               float64
-	MaximumSpread        float64
+	ErrorRate     float64
+	ParetoSubset  float64
+	MaximumSpread float64
 
 	plot *glot.Plot
 }
@@ -240,21 +238,18 @@ func (nsgaii *NSGAII) crowdingDistance(rank int) {
 func (nsgaii *NSGAII) CalcErrorRate() float64 {
 	nsgaii.ErrorRate = 0.0
 
-	nonDominated := make([]*Individual, 0)
-	nonDominatedSize := 0
-	for i := 0; i < nsgaii.PopulationSize; i++ {
-		if nsgaii.Population[i].Rank == 0 {
-			nonDominatedSize++
-			nonDominated = append(nonDominated, &nsgaii.Population[i])
-		}
-	}
+	for _, ind := range nsgaii.Population {
+		for i := 0; i < ind.DNASize; i++ {
+			cell := (*ind.DNA)[i]
 
-	for i := 0; i < nonDominatedSize; i++ {
-		for _, indRef := range nsgaii.ParetoOptimal {
-			if indRef.Dominate(nonDominated[i]) {
-				nsgaii.ErrorRate++
-				break
+			if (cell >= 1 && cell <= 1.5) ||
+				(cell >= 3 && cell <= 3.5) ||
+				(cell >= 5 && cell <= 5.5) {
+				continue
 			}
+
+			nsgaii.ErrorRate++
+			break
 		}
 	}
 
@@ -262,78 +257,10 @@ func (nsgaii *NSGAII) CalcErrorRate() float64 {
 	return nsgaii.ErrorRate
 }
 
-//CalcGenerationalDistance :: Calculaa generational distance
-func (nsgaii *NSGAII) CalcGenerationalDistance() float64 {
-	nsgaii.GenerationalDistance = 0.0
-
-	sizeRef := len(nsgaii.ParetoOptimal)
-
-	for i := 0; i < nsgaii.PopulationSize; i++ {
-		for j := 0; j < sizeRef; j++ {
-			nsgaii.ParetoOptimal[j].GoalsDistance(nsgaii.Population[i])
-		}
-		sort.Sort(ByDistance(nsgaii.ParetoOptimal))
-
-		nsgaii.GenerationalDistance += nsgaii.ParetoOptimal[0].Distance
-	}
-
-	nsgaii.GenerationalDistance = math.Sqrt(nsgaii.GenerationalDistance)
-	nsgaii.GenerationalDistance /= float64(nsgaii.PopulationSize)
-
-	return nsgaii.GenerationalDistance
-}
-
 //CalcParetoSubset :: Calcula o paretosubset
 func (nsgaii *NSGAII) CalcParetoSubset() float64 {
 	nsgaii.ParetoSubset = (1 - nsgaii.ErrorRate) * float64(nsgaii.PopulationSize)
 	return nsgaii.ParetoSubset
-}
-
-//CalcSpread :: Calcula o spread
-func (nsgaii *NSGAII) CalcSpread() float64 {
-	nonDominated := make([]*Individual, 0)
-	nonDominatedSize := 0
-
-	for i := 0; i < nsgaii.PopulationSize; i++ {
-		if nsgaii.Population[i].Rank == 0 {
-			nonDominatedSize++
-			nsgaii.Population[i].CurrentGoal = 0
-			nonDominated = append(nonDominated, &nsgaii.Population[i])
-		}
-	}
-	sort.Sort(ByGoal(nonDominated))
-
-	dIE := 0.0
-
-	byGoalSorted := make([]*Individual, nonDominatedSize)
-	copy(byGoalSorted, nonDominated)
-	for goal := 0; goal < nsgaii.Population[0].GoalsSize; goal++ {
-		for i := 0; i < nonDominatedSize; i++ {
-			byGoalSorted[i].CurrentGoal = goal
-		}
-		sort.Sort(ByGoal(byGoalSorted))
-
-		dIE += byGoalSorted[0].GoalsDistance(*nonDominated[0])                                   // soma os extremos superiores em realacao ao objetivo
-		dIE += byGoalSorted[nonDominatedSize-1].GoalsDistance(*nonDominated[nonDominatedSize-1]) // soma os extremos inferirores
-	}
-
-	dAverage := 0.0
-	for i := 0; i < nonDominatedSize-1; i++ {
-		dAverage += nonDominated[i].GoalsDistance(*nonDominated[i+1])
-	}
-	dAverage /= float64(nonDominatedSize - 1)
-
-	sum := 0.0
-	for i := 0; i < nonDominatedSize-1; i++ {
-		di := nonDominated[i].GoalsDistance(*nonDominated[i+1])
-		sum += math.Abs(di - dAverage)
-	}
-
-	a := dIE + sum
-	b := dIE + ((dAverage) * float64(nonDominatedSize-1))
-	nsgaii.Spread = a / b
-
-	return nsgaii.Spread
 }
 
 //CalcMaximumSpread :: Calcula o MaximumSpread
